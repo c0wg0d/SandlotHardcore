@@ -1,0 +1,14 @@
+options:
+  world-name: hardcore
+  scoreboard-update-interval-in-seconds: 60
+  creeper-explosion-radius: 6.0
+  creeper-explosion-fire: true
+  disable-golden-apple-recipe: true
+  disable-regen: true
+  invulnerable-time-after-death-in-seconds: 60
+  random-respawn: true
+  random-respawn-limits:
+    min-x: -1000
+    max-x: 1000
+    min-z: -1000
+    max-z: 1000

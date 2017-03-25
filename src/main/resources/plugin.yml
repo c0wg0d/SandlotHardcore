@@ -1,0 +1,15 @@
+name: SandlotHardcore
+version: ${project.version}
+main: me.c0wg0d.sandlothardcore.SandlotHardcore
+prefix: SandlotHardcore
+author: c0wg0d
+description: Sandlot Hardcore
+website: http://www.sandlotminecraft.com
+softdepend:
+  - Vault
+
+commands:
+  shc:
+    description: 'Sandlot Hardcore Admin'
+  deaths:
+    description: 'States how many times a player has died'
