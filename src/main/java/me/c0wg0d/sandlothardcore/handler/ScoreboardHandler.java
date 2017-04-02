@@ -29,7 +29,7 @@ public class ScoreboardHandler {
 
             // Set their score to % of total based on number of deaths, increments of 10%, max 10 deaths
             int deathsPenalty = (10 - deaths) * 10;
-            if (deaths > 10) {
+            if (deaths >= 10) {
                 deathsPenalty = 1;
             }
             score = score * deathsPenalty;

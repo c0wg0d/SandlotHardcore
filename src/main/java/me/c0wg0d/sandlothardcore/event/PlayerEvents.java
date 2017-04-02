@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -51,7 +52,15 @@ public class PlayerEvents implements Listener {
             p.getInventory().addItem(new ItemStack(Material.COMPASS));
         }
 
+        p.setInvulnerable(false);
+
         updateScoreboards();
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        Player p = e.getPlayer();
+        p.setInvulnerable(false);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
