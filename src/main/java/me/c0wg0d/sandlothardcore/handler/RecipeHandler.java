@@ -21,7 +21,14 @@ public class RecipeHandler {
             recipe = recipeList.next();
             if (recipe != null && recipe.getResult().getType() == Material.GOLDEN_APPLE)
             {
-                recipeList.remove();
+                // Can't do this in 1.12 anymore
+                //recipeList.remove();
+            }
+
+            if (recipe != null && recipe.getResult().getType() == Material.FISHING_ROD)
+            {
+                // Can't do this in 1.12 anymore
+                //recipeList.remove();
             }
         }
     }

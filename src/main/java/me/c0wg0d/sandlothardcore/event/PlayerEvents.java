@@ -27,6 +27,7 @@ public class PlayerEvents implements Listener {
     private final int invulnerableTime;
     private final boolean disableRegen;
     private final boolean randomRespawn;
+    private final boolean randomRespawnOnFirstJoin;
     private final int minX;
     private final int maxX;
     private final int minZ;
@@ -37,6 +38,7 @@ public class PlayerEvents implements Listener {
         invulnerableTime = plugin.getConfig().getInt("options.invulnerable-time-after-death-in-seconds", 60);
         disableRegen = plugin.getConfig().getBoolean("options.disable-regen", true);
         randomRespawn = plugin.getConfig().getBoolean("options.random-respawn", true);
+        randomRespawnOnFirstJoin = plugin.getConfig().getBoolean("options.random-respawn-on-first-join", false);
         minX = plugin.getConfig().getInt("options.random-respawn-limits.min-x", 100);
         maxX = plugin.getConfig().getInt("options.random-respawn-limits.max-x", 100);
         minZ = plugin.getConfig().getInt("options.random-respawn-limits.min-z", 100);
@@ -55,6 +57,28 @@ public class PlayerEvents implements Listener {
         p.setInvulnerable(false);
 
         updateScoreboards();
+
+        if(p.hasPlayedBefore()) {
+            return;
+        }
+
+        if(randomRespawnOnFirstJoin) {
+            Location respawnLocation = LocationUtil.findNearestSafeLocation(randomRespawnLocation(), null);
+            int tries = 10;
+            while(respawnLocation == null) {
+                respawnLocation = LocationUtil.findNearestSafeLocation(randomRespawnLocation(), null);
+                if(tries == 0) {
+                    break;
+                }
+                tries--;
+            }
+            if(respawnLocation == null) {
+                p.sendMessage(ChatColor.BLUE + "No suitable spawn location found, sending you to world spawn");
+                return;
+            }
+            p.teleport(respawnLocation);
+        }
+
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -140,8 +164,8 @@ public class PlayerEvents implements Listener {
 
     public Location randomRespawnLocation() {
         Random random = new Random();
-        int x = random.nextInt(maxX - minX + minX);
-        int z = random.nextInt(maxZ - minZ + minZ);
+        int x = random.nextInt(maxX - minX) + minX;
+        int z = random.nextInt(maxZ - minZ) + minZ;
         int y = plugin.getHardcoreWorld().getHighestBlockYAt(x, z);
         return new Location(plugin.getHardcoreWorld(), x, y, z);
     }

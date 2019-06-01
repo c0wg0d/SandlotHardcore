@@ -6,6 +6,7 @@ options:
   disable-golden-apple-recipe: true
   disable-regen: true
   invulnerable-time-after-death-in-seconds: 60
+  random-respawn-on-first-join: false
   random-respawn: true
   random-respawn-limits:
     min-x: -1000
