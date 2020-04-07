@@ -26,11 +26,13 @@ package me.c0wg0d.sandlothardcore.util;
  */
 
         import com.google.common.collect.Lists;
+        import org.bukkit.Bukkit;
         import org.bukkit.ChatColor;
         import org.bukkit.Material;
         import org.bukkit.SkullType;
         import org.bukkit.block.Block;
         import org.bukkit.block.Skull;
+        import org.bukkit.block.data.Rotatable;
         import org.bukkit.entity.Entity;
         import org.bukkit.entity.Player;
         import org.bukkit.inventory.ItemStack;
@@ -38,6 +40,7 @@ package me.c0wg0d.sandlothardcore.util;
         import org.bukkit.inventory.meta.SkullMeta;
 
         import java.util.List;
+        import java.util.UUID;
 
 public class DefaultPlayerHeadProvider implements PlayerHeadProvider
 {
@@ -58,9 +61,9 @@ public class DefaultPlayerHeadProvider implements PlayerHeadProvider
     @Override
     public ItemStack getPlayerHead(String name)
     {
-        ItemStack is = new ItemStack(Material.SKULL_ITEM, 1);
+        ItemStack is = new ItemStack(Material.PLAYER_HEAD, 1);
         //3 is a player skull
-        is.setDurability((short) 3);
+        //is.setDurability((short) 3);
 
         SkullMeta meta = (SkullMeta) is.getItemMeta();
         meta.setOwner(name);
@@ -129,15 +132,24 @@ public class DefaultPlayerHeadProvider implements PlayerHeadProvider
     public void setBlockAsHead(String name, Block headBlock, BlockFace2D direction)
     {
         //set the type to skull
-        headBlock.setType(Material.SKULL);
+        //headBlock.setType(Material.SKULL);
         //noinspection deprecation
-        headBlock.setData((byte) 1); //TODO depreacted but no alternative yet
+        //headBlock.setData((byte) 1); //TODO depreacted but no alternative yet
 
         //get the state to be a player skull for the player and set its rotation based on where the player was looking
+        //Skull state = (Skull) headBlock.getState();
+        //state.setSkullType(SkullType.PLAYER);
+        //state.setOwner(name);
+        //state.setRotation(direction.getBlockFace());
+        //state.update();
+        Player p = Bukkit.getPlayer(name);
+
+        headBlock.setType(Material.PLAYER_HEAD);
         Skull state = (Skull) headBlock.getState();
-        state.setSkullType(SkullType.PLAYER);
-        state.setOwner(name);
-        state.setRotation(direction.getBlockFace());
-        state.update();
+        state.setOwningPlayer(Bukkit.getServer().getOfflinePlayer(p.getUniqueId()));
+        Rotatable skullRotation = (Rotatable) state.getBlockData();
+        skullRotation.setRotation(direction.getBlockFace());
+        state.setBlockData(skullRotation);
+        state.update(true);
     }
 }

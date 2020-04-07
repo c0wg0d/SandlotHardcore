@@ -57,7 +57,7 @@ public enum ChunkUtil {;
             if (chunkAt != null) {
                 int cx = x & 0xF;
                 int cz = z & 0xF;
-                return Material.getMaterial(chunkAt.getBlockTypeId(cx, y, cz));
+                return Material.getMaterial(chunkAt.getBlockType(cx, y, cz).name());
             }
             return null;
         }

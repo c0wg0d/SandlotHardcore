@@ -64,7 +64,7 @@ public class PlayerEvents implements Listener {
 
         if(randomRespawnOnFirstJoin) {
             Location respawnLocation = LocationUtil.findNearestSafeLocation(randomRespawnLocation(), null);
-            int tries = 10;
+            int tries = 100;
             while(respawnLocation == null) {
                 respawnLocation = LocationUtil.findNearestSafeLocation(randomRespawnLocation(), null);
                 if(tries == 0) {
@@ -95,7 +95,7 @@ public class PlayerEvents implements Listener {
         updateScoreboards();
 
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-            player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 1, 1);
+            player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 1);
         }
 
         String deathMessage = ChatColor.RED + p.getDisplayName() + ChatColor.GRAY + " just died at "
