@@ -1,10 +1,11 @@
 package me.c0wg0d.sandlothardcore;
 
 import dk.lockfuglsang.minecraft.util.TimeUtil;
+import me.c0wg0d.sandlothardcore.event.AdvancedAchievementsEvents;
 import me.c0wg0d.sandlothardcore.event.EntityEvents;
 import me.c0wg0d.sandlothardcore.event.InventoryEvents;
 import me.c0wg0d.sandlothardcore.event.PlayerEvents;
-import me.c0wg0d.sandlothardcore.handler.RecipeHandler;
+import me.c0wg0d.sandlothardcore.handler.ScoreboardHandler;
 import me.c0wg0d.sandlothardcore.handler.VaultHandler;
 import me.c0wg0d.sandlothardcore.player.PlayerInfo;
 import me.c0wg0d.sandlothardcore.player.PlayerLogic;
@@ -16,8 +17,10 @@ import me.c0wg0d.sandlothardcore.uuid.PlayerDB;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import dk.lockfuglsang.minecraft.file.FileUtil;
@@ -25,26 +28,25 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 
-import static me.c0wg0d.sandlothardcore.handler.ScoreboardHandler.updateScoreboards;
-
 public final class SandlotHardcore extends JavaPlugin {
 
     private static SandlotHardcore instance;
+    private static Settings settings;
     public File directoryPlayers;
     private PlayerDB playerDB;
     private PlayerLogic playerLogic;
     private PlayerHeadProvider provider;
 
-    public SandlotHardcore() {
-    }
-
     public static SandlotHardcore getInstance() { return SandlotHardcore.instance; }
+    public static Settings getSettings() { return SandlotHardcore.settings; }
 
     @Override
     public void onEnable() {
         instance = this;
+        settings = new Settings();
         registerEvents();
         reloadConfigs();
+        ScoreboardHandler.createScoreboard();
     }
 
     @Override
@@ -76,17 +78,31 @@ public final class SandlotHardcore extends JavaPlugin {
         manager.registerEvents(new PlayerEvents(this), this);
         manager.registerEvents(new EntityEvents(this), this);
         manager.registerEvents(new InventoryEvents(this), this);
-        RecipeHandler.register(this);
+
+        if (manager.isPluginEnabled("AdvancedAchievements")) {
+            Plugin pluginInstance = manager.getPlugin("AdvancedAchievements");
+            // Check whether the running version contains the PlayerAdvancedAchievementEvent class.
+            if (Integer.parseInt(Character.toString(pluginInstance.getDescription().getVersion().charAt(0))) >= 5) {
+                manager.registerEvents(new AdvancedAchievementsEvents(this), this);
+            }
+        }
     }
 
     private void reloadConfigs() {
         createFolders();
         VaultHandler.setupEconomy();
         VaultHandler.setupPermissions();
-        if (Settings.loadPluginConfig(getConfig())) {
-            saveConfig();
+
+        File configFile = new File(getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            saveDefaultConfig();
+            reloadConfig();
+            getConfig().setDefaults(YamlConfiguration.loadConfiguration(getTextResource("config.yml")));
         }
-        reloadConfig();
+        else {
+            reloadConfig();
+        }
+        settings.loadPluginConfig(this);
         FileUtil.reload();
 
         String playerDbStorage = getConfig().getString("options.advanced.playerdb.storage", "yml");
@@ -193,15 +209,15 @@ public final class SandlotHardcore extends JavaPlugin {
     }
 
     public static World getHardcoreWorld() {
-        return Bukkit.getWorld(Settings.optionWorldName);
+        return Bukkit.getWorld(Settings.WORLD_NAME);
     }
 
     public static World getHardcoreWorldNether() {
-        return Bukkit.getWorld(Settings.optionWorldNameNether);
+        return Bukkit.getWorld(Settings.WORLD_NAME_NETHER);
     }
 
     public static World getHardcoreWorldTheEnd() {
-        return Bukkit.getWorld(Settings.optionWorldNameTheEnd);
+        return Bukkit.getWorld(Settings.WORLD_NAME_THE_END);
     }
 
 }

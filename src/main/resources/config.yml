@@ -1,6 +1,5 @@
 options:
-  world-name: hardcore
-  scoreboard-update-interval-in-seconds: 60
+  world-name: world
   creeper-explosion-radius: 6.0
   creeper-explosion-fire: true
   disable-golden-apple-recipe: true

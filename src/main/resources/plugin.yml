@@ -5,9 +5,10 @@ prefix: SandlotHardcore
 author: c0wg0d
 description: Sandlot Hardcore
 website: http://www.sandlotminecraft.com
-api-version: 1.15
-softdepend:
+api-version: 1.17
+depend:
   - Vault
+  - AdvancedAchievements
 
 commands:
   shc:

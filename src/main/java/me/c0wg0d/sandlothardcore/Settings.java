@@ -2,49 +2,60 @@ package me.c0wg0d.sandlothardcore;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.logging.Logger;
-
 public class Settings {
-    private static final Logger log = Logger.getLogger(Settings.class.getName());
-    public static String optionWorldName;
-    public static String optionWorldNameNether;
-    public static String optionWorldNameTheEnd;
-    public static int optionScoreboardUpdateIntervalInSeconds;
-    public static double optionCreeperExplosionRadius;
-    public static boolean optionCreeperExplosionFire;
-    public static boolean optionDisableGoldenAppleRecipe;
-    public static boolean optionDisableRegen;
 
-    public static boolean loadPluginConfig(FileConfiguration config) {
-        boolean changed = false;
+    public static String WORLD_NAME;
+    public static String WORLD_NAME_NETHER;
+    public static String WORLD_NAME_THE_END;
+    public static double CREEPER_EXPLOSION_RADIUS;
+    public static boolean CREEPER_EXPLOSION_FIRE;
+    public static boolean DISABLE_GOLDEN_APPLE;
+    public static boolean DISABLE_REGEN;
+    public static int INVULNERABLE_TIME_AFTER_DEATH_IN_SECONDS;
+    public static boolean RANDOM_RESPAWN_ON_FIRST_JOIN;
+    public static boolean RANDOM_RESPAWN_AFTER_DEATH;
+    public static int RANDOM_RESPAWN_MIN_X;
+    public static int RANDOM_RESPAWN_MAX_X;
+    public static int RANDOM_RESPAWN_MIN_Z;
+    public static int RANDOM_RESPAWN_MAX_Z;
 
-        optionWorldName = config.getString("options.world-name");
-        optionWorldNameNether = optionWorldName + "_nether";
-        optionWorldNameTheEnd = optionWorldName + "_the_end";
+    public void loadPluginConfig(SandlotHardcore plugin) {
 
-        try {
-            optionScoreboardUpdateIntervalInSeconds = config.getInt("options.scoreboard-update-interval-in-seconds");
-            if (optionScoreboardUpdateIntervalInSeconds < 0) {
-                optionScoreboardUpdateIntervalInSeconds = 60;
-            }
-        } catch (Exception e) {
-            optionScoreboardUpdateIntervalInSeconds = 60;
-        }
+        FileConfiguration config = plugin.getConfig();
+        WORLD_NAME = config.getString("options.world-name");
+        WORLD_NAME_NETHER = WORLD_NAME + "_nether";
+        WORLD_NAME_THE_END = WORLD_NAME + "_the_end";
 
         try {
-            optionCreeperExplosionRadius = config.getInt("options.creeper-explosion-radius");
-            if (optionCreeperExplosionRadius < 0) {
-                optionCreeperExplosionRadius = 0;
+            CREEPER_EXPLOSION_RADIUS = config.getInt("options.creeper-explosion-radius");
+            if (CREEPER_EXPLOSION_RADIUS < 0) {
+                CREEPER_EXPLOSION_RADIUS = 0;
             }
         } catch (Exception e) {
-            optionCreeperExplosionRadius = 3;
+            CREEPER_EXPLOSION_RADIUS = 3;
         }
 
-        optionCreeperExplosionFire = config.getBoolean("options.creeper-explosion-fire");
-        optionDisableGoldenAppleRecipe = config.getBoolean("options.disable-golden-apple-recipe");
-        optionDisableRegen = config.getBoolean("options.disable-regen");
+        CREEPER_EXPLOSION_FIRE = config.getBoolean("options.creeper-explosion-fire");
+        DISABLE_GOLDEN_APPLE = config.getBoolean("options.disable-golden-apple-recipe");
+        DISABLE_REGEN = config.getBoolean("options.disable-regen");
 
-        return changed;
+        try {
+            INVULNERABLE_TIME_AFTER_DEATH_IN_SECONDS = config.getInt("options.invulnerable-time-after-death-in-seconds");
+        } catch (Exception e) {
+            INVULNERABLE_TIME_AFTER_DEATH_IN_SECONDS = 60;
+        }
+
+        RANDOM_RESPAWN_ON_FIRST_JOIN = config.getBoolean("options.random-respawn-on-first-join");
+        RANDOM_RESPAWN_AFTER_DEATH = config.getBoolean("options.random-respawn");
+
+        try {
+            RANDOM_RESPAWN_MIN_X = config.getInt("options.random-respawn-limits.min-x", -1000);
+            RANDOM_RESPAWN_MAX_X = config.getInt("options.random-respawn-limits.max-x", 1000);
+            RANDOM_RESPAWN_MIN_Z = config.getInt("options.random-respawn-limits.min-z", -1000);
+            RANDOM_RESPAWN_MAX_Z = config.getInt("options.random-respawn-limits.max-z", 1000);
+        } catch (Exception e) {
+            CREEPER_EXPLOSION_RADIUS = 3;
+        }
     }
 
 }

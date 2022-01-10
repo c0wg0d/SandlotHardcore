@@ -7,23 +7,44 @@ import org.bukkit.scoreboard.*;
 
 public class ScoreboardHandler {
 
-    public static void updateScoreboards() {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard scoreboard = manager.getNewScoreboard();
-        Objective deathsObjective = scoreboard.registerNewObjective("deaths", "deathCount");
-        deathsObjective.setDisplayName("Deaths");
+    private static final ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
+    private static Scoreboard scoreboard;
+    private static Objective deathsObjective;
+    private static Objective pointsObjective;
+
+    public static void createScoreboard() {
+        assert scoreboardManager != null;
+        scoreboard = scoreboardManager.getNewScoreboard();
+        deathsObjective = scoreboard.registerNewObjective("deaths", "deathCount", "Deaths");
         deathsObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
 
-        Objective pointsObjective = scoreboard.registerNewObjective("points", "dummy");
-        pointsObjective.setDisplayName("Points");
+        pointsObjective = scoreboard.registerNewObjective("points", "dummy", "Points");
         pointsObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+    }
 
+    public static void addPlayer(Player player) {
+        Score deathsScore = deathsObjective.getScore(player.getName());
+        deathsScore.setScore(0);
+        Score pointsScore = pointsObjective.getScore(player.getName());
+        pointsScore.setScore(0);
+        player.setScoreboard(scoreboard);
+    }
+
+    public static void removePlayer(Player player) {
+        for (String entry : scoreboard.getEntries()) {
+            if (entry.contains(player.getName()) || (player != null && !player.isOnline()))
+                scoreboard.resetScores(entry);
+        }
+    }
+
+    public static void updateScores() {
         for(Player online : Bukkit.getOnlinePlayers()) {
+            // Update deaths
             int deaths = online.getStatistic(Statistic.DEATHS);
             Score deathsScore = deathsObjective.getScore(online.getName());
             deathsScore.setScore(deaths);
-            online.setScoreboard(scoreboard);
 
+            // Update points
             Score pointsScore = pointsObjective.getScore(online.getName());
             int score = (int) Math.floor(VaultHandler.getEcon().getBalance(online));
 
@@ -35,7 +56,8 @@ public class ScoreboardHandler {
             score = score * deathsPenalty;
 
             pointsScore.setScore(score);
-            online.setScoreboard(scoreboard);
         }
     }
+
+
 }

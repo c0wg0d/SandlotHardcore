@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
@@ -43,19 +42,6 @@ public class BlockUtil {
         if(skullBlock == null || !skullBlock.isEmpty()) {
             return false;
         }
-
-        //set the skull block to an actual skull block
-        //set the type to skull
-        //headBlock.setType(Material.SKULL);
-        //noinspection deprecation
-        //headBlock.setData((byte) 1); //TODO depreacted but no alternative yet
-
-        //get the state to be a player skull for the player and set its rotation based on where the player was looking
-        //Skull state = (Skull) headBlock.getState();
-        //state.setSkullType(SkullType.PLAYER);
-        //state.setOwner(p.getName());
-        //state.setRotation(BlockFace2D.getClosest(Math.toRadians(p.getLocation().getYaw())).getBlockFace());
-        //state.update();
 
         headBlock.setType(Material.PLAYER_HEAD);
         Skull state = (Skull) headBlock.getState();

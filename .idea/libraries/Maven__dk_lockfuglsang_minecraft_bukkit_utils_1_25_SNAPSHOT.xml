@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: dk.lockfuglsang.minecraft:bukkit-utils:1.25-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.m2/repository/dk/lockfuglsang/minecraft/bukkit-utils/1.25-SNAPSHOT/bukkit-utils-1.25-20210814.221706-1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.m2/repository/dk/lockfuglsang/minecraft/bukkit-utils/1.25-SNAPSHOT/bukkit-utils-1.25-20210814.221706-1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.m2/repository/dk/lockfuglsang/minecraft/bukkit-utils/1.25-SNAPSHOT/bukkit-utils-1.25-20210814.221706-1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -2,6 +2,7 @@ package me.c0wg0d.sandlothardcore.event;
 
 import dk.lockfuglsang.minecraft.util.TimeUtil;
 import me.c0wg0d.sandlothardcore.SandlotHardcore;
+import me.c0wg0d.sandlothardcore.Settings;
 import me.c0wg0d.sandlothardcore.handler.ScoreboardHandler;
 import me.c0wg0d.sandlothardcore.util.BlockUtil;
 import me.c0wg0d.sandlothardcore.util.LocationUtil;
@@ -12,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -19,50 +21,32 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Random;
 
-import static me.c0wg0d.sandlothardcore.handler.ScoreboardHandler.updateScoreboards;
-
 public class PlayerEvents implements Listener {
 
     private final SandlotHardcore plugin;
-    private final int invulnerableTime;
-    private final boolean disableRegen;
-    private final boolean randomRespawn;
-    private final boolean randomRespawnOnFirstJoin;
-    private final int minX;
-    private final int maxX;
-    private final int minZ;
-    private final int maxZ;
 
     public PlayerEvents(SandlotHardcore plugin) {
         this.plugin = plugin;
-        invulnerableTime = plugin.getConfig().getInt("options.invulnerable-time-after-death-in-seconds", 60);
-        disableRegen = plugin.getConfig().getBoolean("options.disable-regen", true);
-        randomRespawn = plugin.getConfig().getBoolean("options.random-respawn", true);
-        randomRespawnOnFirstJoin = plugin.getConfig().getBoolean("options.random-respawn-on-first-join", false);
-        minX = plugin.getConfig().getInt("options.random-respawn-limits.min-x", 100);
-        maxX = plugin.getConfig().getInt("options.random-respawn-limits.max-x", 100);
-        minZ = plugin.getConfig().getInt("options.random-respawn-limits.min-z", 100);
-        maxZ = plugin.getConfig().getInt("options.random-respawn-limits.max-z", 100);
-
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerJoin(PlayerJoinEvent e) {
-        Player p = e.getPlayer();
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
 
-        if(!p.getInventory().contains(Material.COMPASS)) {
-            p.getInventory().addItem(new ItemStack(Material.COMPASS));
+        if(!player.getInventory().contains(Material.COMPASS)) {
+            player.getInventory().addItem(new ItemStack(Material.COMPASS));
         }
 
-        p.setInvulnerable(false);
+        player.setInvulnerable(false);
 
-        updateScoreboards();
+        ScoreboardHandler.addPlayer(player);
+        ScoreboardHandler.updateScores();
 
-        if(p.hasPlayedBefore()) {
+        if(player.hasPlayedBefore()) {
             return;
         }
 
-        if(randomRespawnOnFirstJoin) {
+        if(Settings.RANDOM_RESPAWN_ON_FIRST_JOIN) {
             Location respawnLocation = LocationUtil.findNearestSafeLocation(randomRespawnLocation(), null);
             int tries = 100;
             while(respawnLocation == null) {
@@ -73,41 +57,41 @@ public class PlayerEvents implements Listener {
                 tries--;
             }
             if(respawnLocation == null) {
-                p.sendMessage(ChatColor.BLUE + "No suitable spawn location found, sending you to world spawn");
+                player.sendMessage(ChatColor.BLUE + "No suitable spawn location found, sending you to world spawn");
                 return;
             }
-            p.teleport(respawnLocation);
+            player.teleport(respawnLocation);
         }
 
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerQuit(PlayerQuitEvent e) {
-        Player p = e.getPlayer();
-        p.setInvulnerable(false);
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        player.setInvulnerable(false);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerDeathEvent(PlayerDeathEvent e) {
-        Player p = e.getEntity();
+    public void onPlayerDeathEvent(PlayerDeathEvent event) {
+        Player player = event.getEntity();
 
-        BlockUtil.putHeadOnStake(p);
-        updateScoreboards();
+        BlockUtil.putHeadOnStake(player);
+        ScoreboardHandler.updateScores();
 
-        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-            player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 1);
+        for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers()) {
+            onlinePlayer.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 1);
         }
 
-        String deathMessage = ChatColor.RED + p.getDisplayName() + ChatColor.GRAY + " just died at "
-                + p.getLocation().getBlockX() + ", "
-                + p.getLocation().getBlockY() + ", "
-                + p.getLocation().getBlockZ();
+        String deathMessage = ChatColor.RED + player.getDisplayName() + ChatColor.GRAY + " just died at "
+                + player.getLocation().getBlockX() + ", "
+                + player.getLocation().getBlockY() + ", "
+                + player.getLocation().getBlockZ();
 
-        if(p.getLocation().getWorld().getName().equals(plugin.getHardcoreWorldNether())) {
+        if(player.getLocation().getWorld().getName().equals(Settings.WORLD_NAME_NETHER)) {
             deathMessage += " in the nether";
         }
 
-        if(p.getLocation().getWorld().getName().equals(plugin.getHardcoreWorldTheEnd())) {
+        if(player.getLocation().getWorld().getName().equals(Settings.WORLD_NAME_THE_END)) {
             deathMessage += " in the end";
         }
 
@@ -118,7 +102,7 @@ public class PlayerEvents implements Listener {
     // Disable health regen from eating and beacons
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRegainHealth(EntityRegainHealthEvent event) {
-        if(!disableRegen) {
+        if(!Settings.DISABLE_REGEN) {
             return;
         }
         if(event.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED
@@ -129,21 +113,21 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerRespawnEvent(PlayerRespawnEvent e) {
-        updateScoreboards();
+    public void onPlayerRespawnEvent(PlayerRespawnEvent event) {
+        ScoreboardHandler.updateScores();
 
-        Player p = e.getPlayer();
-        p.getInventory().addItem(new ItemStack(Material.COMPASS));
-        p.setInvulnerable(true);
+        Player player = event.getPlayer();
+        player.getInventory().addItem(new ItemStack(Material.COMPASS));
+        player.setInvulnerable(true);
         plugin.async(new Runnable() {
             @Override
             public void run() {
-                p.setInvulnerable(false);
-                p.sendMessage(ChatColor.BLUE + "Your invulnerability has worn out. Be careful out there!");
+                player.setInvulnerable(false);
+                player.sendMessage(ChatColor.BLUE + "Your invulnerability has worn out. Be careful out there!");
             }
-        }, TimeUtil.secondsAsMillis(invulnerableTime));
+        }, TimeUtil.secondsAsMillis(Settings.INVULNERABLE_TIME_AFTER_DEATH_IN_SECONDS));
 
-        if(!randomRespawn) {
+        if(!Settings.RANDOM_RESPAWN_AFTER_DEATH) {
             return;
         }
         Location respawnLocation = LocationUtil.findNearestSafeLocation(randomRespawnLocation(), null);
@@ -156,16 +140,30 @@ public class PlayerEvents implements Listener {
             tries--;
         }
         if(respawnLocation == null) {
-            p.sendMessage(ChatColor.BLUE + "No suitable spawn location found, sending you to world spawn");
+            player.sendMessage(ChatColor.BLUE + "No suitable spawn location found, sending you to world spawn");
             return;
         }
-        e.setRespawnLocation(respawnLocation);
+        event.setRespawnLocation(respawnLocation);
+    }
+
+    @EventHandler
+    public void onPlayerQuitEvent(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        ScoreboardHandler.removePlayer(player);
+    }
+
+    @EventHandler
+    public void onCraftEvent(CraftItemEvent event) {
+        if (Settings.DISABLE_GOLDEN_APPLE && event.getRecipe().getResult().getType() == Material.GOLDEN_APPLE) {
+            event.setCancelled(true);
+            return;
+        }
     }
 
     public Location randomRespawnLocation() {
         Random random = new Random();
-        int x = random.nextInt(maxX - minX) + minX;
-        int z = random.nextInt(maxZ - minZ) + minZ;
+        int x = random.nextInt(Settings.RANDOM_RESPAWN_MAX_X - Settings.RANDOM_RESPAWN_MIN_X) + Settings.RANDOM_RESPAWN_MIN_X;
+        int z = random.nextInt(Settings.RANDOM_RESPAWN_MAX_Z - Settings.RANDOM_RESPAWN_MIN_Z) + Settings.RANDOM_RESPAWN_MIN_Z;
         int y = plugin.getHardcoreWorld().getHighestBlockYAt(x, z);
         return new Location(plugin.getHardcoreWorld(), x, y, z);
     }

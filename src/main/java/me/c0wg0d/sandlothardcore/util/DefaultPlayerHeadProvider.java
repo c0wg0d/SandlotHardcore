@@ -26,20 +26,19 @@ package me.c0wg0d.sandlothardcore.util;
  */
 
         import com.google.common.collect.Lists;
-        import org.bukkit.Bukkit;
-        import org.bukkit.ChatColor;
-        import org.bukkit.Material;
-        import org.bukkit.SkullType;
+        import org.bukkit.*;
         import org.bukkit.block.Block;
         import org.bukkit.block.Skull;
         import org.bukkit.block.data.Rotatable;
         import org.bukkit.entity.Entity;
+        import org.bukkit.entity.EntityType;
         import org.bukkit.entity.Player;
         import org.bukkit.inventory.ItemStack;
         import org.bukkit.inventory.meta.ItemMeta;
         import org.bukkit.inventory.meta.SkullMeta;
 
         import java.util.List;
+        import java.util.Map;
         import java.util.UUID;
 
 public class DefaultPlayerHeadProvider implements PlayerHeadProvider
@@ -62,8 +61,6 @@ public class DefaultPlayerHeadProvider implements PlayerHeadProvider
     public ItemStack getPlayerHead(String name)
     {
         ItemStack is = new ItemStack(Material.PLAYER_HEAD, 1);
-        //3 is a player skull
-        //is.setDurability((short) 3);
 
         SkullMeta meta = (SkullMeta) is.getItemMeta();
         meta.setOwner(name);

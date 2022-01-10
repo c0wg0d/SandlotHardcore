@@ -1,6 +1,7 @@
 package me.c0wg0d.sandlothardcore.event;
 
 import me.c0wg0d.sandlothardcore.SandlotHardcore;
+import me.c0wg0d.sandlothardcore.handler.ScoreboardHandler;
 import me.c0wg0d.sandlothardcore.player.PlayerInfo;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -9,8 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-
-import static me.c0wg0d.sandlothardcore.handler.ScoreboardHandler.updateScoreboards;
 
 public class InventoryEvents implements Listener {
 
@@ -22,27 +21,27 @@ public class InventoryEvents implements Listener {
 
     @EventHandler(priority=EventPriority.NORMAL)
     public void onPlayerUse(PlayerInteractEvent event) {
-        updateScoreboards();
+        ScoreboardHandler.updateScores();
 
-        Player p = event.getPlayer();
+        Player player = event.getPlayer();
 
-        if(p.getInventory().getItemInMainHand().getType() == Material.COMPASS){
-            if(p.isSneaking()) {
+        if(player.getInventory().getItemInMainHand().getType() == Material.COMPASS){
+            if(player.isSneaking()) {
                 // set home to current location
-                plugin.homeSet(p);
+                plugin.homeSet(player);
             }
             else {
                 // set compass direction to home location
-                PlayerInfo pi = plugin.getPlayerInfo(p);
+                PlayerInfo pi = plugin.getPlayerInfo(player);
                 if(pi.getHasHome()) {
-                    p.setCompassTarget(pi.getHomeLocation());
-                    p.sendMessage(ChatColor.BLUE + "Your compass is now pointing to your home at "
+                    player.setCompassTarget(pi.getHomeLocation());
+                    player.sendMessage(ChatColor.BLUE + "Your compass is now pointing to your home at "
                         + pi.getHomeLocation().getBlockX() + ", "
                         + pi.getHomeLocation().getBlockY() + ", "
                         + pi.getHomeLocation().getBlockZ());
                 }
                 else {
-                    p.sendMessage(ChatColor.YELLOW + "You have not set a home location");
+                    player.sendMessage(ChatColor.YELLOW + "You have not set a home location");
                 }
             }
         }

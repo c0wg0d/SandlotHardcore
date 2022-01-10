@@ -2,12 +2,9 @@ package me.c0wg0d.sandlothardcore.handler;
 
 import me.c0wg0d.sandlothardcore.SandlotHardcore;
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.item.ItemInfo;
-import net.milkbowl.vault.item.Items;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 public enum VaultHandler {;
@@ -53,17 +50,6 @@ public enum VaultHandler {;
         }
         econ = rsp.getProvider();
         return econ != null;
-    }
-
-    public static String getItemName(ItemStack stack) {
-        if (stack != null) {
-            if (stack.getItemMeta() != null && stack.getItemMeta().getDisplayName() != null) {
-                return stack.getItemMeta().getDisplayName();
-            }
-            ItemInfo itemInfo = Items.itemByStack(stack);
-            return itemInfo != null ? itemInfo.getName() : "" + stack.getType();
-        }
-        return null;
     }
 
     public static boolean hasEcon() {
