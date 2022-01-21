@@ -10,9 +10,14 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 import java.util.UUID;
 
-public class NullPlayer implements OfflinePlayer {
-    public static final NullPlayer INSTANCE = new NullPlayer();
+public abstract class NullPlayer implements OfflinePlayer {
+
     private NullPlayer() {
+    }
+
+    @Override
+    public long getLastSeen() {
+        return 0;
     }
 
     @Override

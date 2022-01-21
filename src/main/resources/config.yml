@@ -1,9 +1,26 @@
 options:
   world-name: world
-  creeper-explosion-radius: 6.0
+  always-night: false
+  always-raining: false
+  moon-gravity: false
+  do-fire-tick: true
+  leaves-do-not-drop-saplings: true
+  creeper-explosion-radius: 3.0
   creeper-explosion-fire: true
+  creepers-always-charged: true
+  spiders-always-invisible: true
+  skeletons-always-have-enchanted-bow: true
+  zombies-always-have-iron-armor: true
+  zombie-tower-height: 0
   disable-golden-apple-recipe: true
   disable-regen: true
+  disable-torches-below-y: 0
+  disable-mobs: [ chicken, cod, cow, mooshroom, pig, rabbit, salmon, sheep ]
+  disable-player-jumping: false
+  disable-villager-spawns: false
+  allow-cured-villagers: true
+  allow-baby-villagers: true
+  disable-blaze-spawners: false
   invulnerable-time-after-death-in-seconds: 60
   random-respawn-on-first-join: false
   random-respawn: true

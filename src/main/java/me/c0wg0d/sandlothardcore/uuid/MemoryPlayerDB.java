@@ -19,7 +19,7 @@ import java.util.UUID;
 public class MemoryPlayerDB implements PlayerDB {
     private final LoadingCache<String, OfflinePlayer> nameCache;
     private final LoadingCache<UUID, OfflinePlayer> uuidCache;
-    private static final OfflinePlayer NULL_PLAYER = NullPlayer.INSTANCE;
+    private static final OfflinePlayer NULL_PLAYER = null;
 
     public MemoryPlayerDB(FileConfiguration config) {
         nameCache = CacheBuilder

@@ -1,12 +1,10 @@
 package me.c0wg0d.sandlothardcore;
 
 import dk.lockfuglsang.minecraft.util.TimeUtil;
-import me.c0wg0d.sandlothardcore.event.AdvancedAchievementsEvents;
-import me.c0wg0d.sandlothardcore.event.EntityEvents;
-import me.c0wg0d.sandlothardcore.event.InventoryEvents;
-import me.c0wg0d.sandlothardcore.event.PlayerEvents;
+import me.c0wg0d.sandlothardcore.event.*;
 import me.c0wg0d.sandlothardcore.handler.ScoreboardHandler;
 import me.c0wg0d.sandlothardcore.handler.VaultHandler;
+import me.c0wg0d.sandlothardcore.handler.WorldHandler;
 import me.c0wg0d.sandlothardcore.player.PlayerInfo;
 import me.c0wg0d.sandlothardcore.player.PlayerLogic;
 import me.c0wg0d.sandlothardcore.util.PlayerHeadProvider;
@@ -36,17 +34,26 @@ public final class SandlotHardcore extends JavaPlugin {
     private PlayerDB playerDB;
     private PlayerLogic playerLogic;
     private PlayerHeadProvider provider;
+    private static NamespacedKey keepVillagerKey;
+    private static NamespacedKey zombiePassengerKey;
 
     public static SandlotHardcore getInstance() { return SandlotHardcore.instance; }
-    public static Settings getSettings() { return SandlotHardcore.settings; }
+    public static NamespacedKey getKeepVillagerKey() {
+        return keepVillagerKey;
+    }
+    public static NamespacedKey getZombiePassengerKey() { return zombiePassengerKey; }
 
     @Override
     public void onEnable() {
         instance = this;
         settings = new Settings();
+        keepVillagerKey = new NamespacedKey(this, "KeepVillager");
+        zombiePassengerKey = new NamespacedKey(this, "zombieHasPassenger");
         registerEvents();
         reloadConfigs();
         ScoreboardHandler.createScoreboard();
+        WorldHandler.setAlwaysNight();
+        WorldHandler.setAlwaysRaining();
     }
 
     @Override
@@ -75,9 +82,6 @@ public final class SandlotHardcore extends JavaPlugin {
     public void registerEvents() {
         HandlerList.unregisterAll(this);
         final PluginManager manager = getServer().getPluginManager();
-        manager.registerEvents(new PlayerEvents(this), this);
-        manager.registerEvents(new EntityEvents(this), this);
-        manager.registerEvents(new InventoryEvents(this), this);
 
         if (manager.isPluginEnabled("AdvancedAchievements")) {
             Plugin pluginInstance = manager.getPlugin("AdvancedAchievements");
@@ -86,6 +90,15 @@ public final class SandlotHardcore extends JavaPlugin {
                 manager.registerEvents(new AdvancedAchievementsEvents(this), this);
             }
         }
+
+        manager.registerEvents(new BlockEvents(this), this);
+        manager.registerEvents(new EntityEvents(this), this);
+        manager.registerEvents(new InventoryEvents(this), this);
+        manager.registerEvents(new PlayerEvents(this), this);
+        manager.registerEvents(new SpawnerEvents(this), this);
+        manager.registerEvents(new VillagerEvents(this), this);
+
+
     }
 
     private void reloadConfigs() {
