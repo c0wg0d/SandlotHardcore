@@ -26,7 +26,7 @@ public class EntityEvents implements Listener {
         Float radius = (float) Settings.CREEPER_EXPLOSION_RADIUS;
 
         if (event.getEntity().getType() == EntityType.CREEPER) {
-            event.getLocation().getWorld().createExplosion(event.getEntity(), radius, Settings.CREEPER_EXPLOSION_FIRE);
+            event.getLocation().getWorld().createExplosion(event.getLocation(), radius, Settings.CREEPER_EXPLOSION_FIRE);
         }
     }
 
@@ -77,7 +77,7 @@ public class EntityEvents implements Listener {
             return;
         }
     }
-    
+
     private void addBabyZombiesAsPassengers(Zombie zombie, int amount) {
         Zombie baby = (Zombie) zombie.getWorld().spawnEntity(zombie.getLocation(), EntityType.ZOMBIE);
         baby.setBaby();
