@@ -1,5 +1,7 @@
 options:
   world-name: world
+  use-scoreboard: true
+  use-deaths-point-multiplier: true
   always-night: false
   always-raining: false
   moon-gravity: false

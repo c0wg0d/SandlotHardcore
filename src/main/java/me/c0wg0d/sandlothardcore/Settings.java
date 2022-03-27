@@ -9,6 +9,8 @@ public class Settings {
     public static String WORLD_NAME;
     public static String WORLD_NAME_NETHER;
     public static String WORLD_NAME_THE_END;
+    public static boolean USE_SCOREBOARD;
+    public static boolean USE_DEATHS_POINT_MULTIPLIER;
     public static boolean ALWAYS_NIGHT;
     public static boolean ALWAYS_RAINING;
     public static boolean DO_FIRE_TICK;
@@ -44,6 +46,8 @@ public class Settings {
         WORLD_NAME = config.getString("options.world-name");
         WORLD_NAME_NETHER = WORLD_NAME + "_nether";
         WORLD_NAME_THE_END = WORLD_NAME + "_the_end";
+        USE_SCOREBOARD = config.getBoolean("options.use-scoreboard");
+        USE_DEATHS_POINT_MULTIPLIER = config.getBoolean("options.use-deaths-point-multiplier");
         ALWAYS_NIGHT = config.getBoolean("options.always-night");
         ALWAYS_RAINING = config.getBoolean("options.always-raining");
         DO_FIRE_TICK = config.getBoolean("options.do-fire-tick");
@@ -73,7 +77,7 @@ public class Settings {
         } catch (Exception e) {
             ZOMBIE_TOWER_HEIGHT = 0;
         }
-        
+
         DISABLE_GOLDEN_APPLE = config.getBoolean("options.disable-golden-apple-recipe");
         DISABLE_REGEN = config.getBoolean("options.disable-regen");
 

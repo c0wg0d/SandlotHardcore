@@ -1,5 +1,6 @@
 package me.c0wg0d.sandlothardcore.handler;
 
+import me.c0wg0d.sandlothardcore.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
@@ -19,7 +20,9 @@ public class ScoreboardHandler {
         deathsObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
 
         pointsObjective = scoreboard.registerNewObjective("points", "dummy", "Points");
-        pointsObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        if (Settings.USE_SCOREBOARD) {
+            pointsObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        }
     }
 
     public static void addPlayer(Player player) {
@@ -38,7 +41,7 @@ public class ScoreboardHandler {
     }
 
     public static void updateScores() {
-        for(Player online : Bukkit.getOnlinePlayers()) {
+        for (Player online : Bukkit.getOnlinePlayers()) {
             // Update deaths
             int deaths = online.getStatistic(Statistic.DEATHS);
             Score deathsScore = deathsObjective.getScore(online.getName());
@@ -50,7 +53,7 @@ public class ScoreboardHandler {
 
             // Set their score to % of total based on number of deaths, increments of 10%, max 10 deaths
             int deathsPenalty = (10 - deaths) * 10;
-            if (deaths >= 10) {
+            if (deaths >= 10 || !Settings.USE_DEATHS_POINT_MULTIPLIER) {
                 deathsPenalty = 1;
             }
             score = score * deathsPenalty;
